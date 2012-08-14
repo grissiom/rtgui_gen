@@ -15,8 +15,6 @@ from PyQt4.QtSql  import *
 from PyQt4.uic    import loadUiType
 from PyQt4.QtCore import Qt
 
-import rtgui_sys
-
 qapp = QApplication(sys.argv)
 bt_dump_f = open('btdump.txt', 'a')
 
@@ -61,5 +59,7 @@ if __name__ == '__main__':
     #mw = main_wd()
     #mw.show()
     #sys.exit(qapp.exec_())
-    import sample_ui
-    print rtgui_sys.wins[0]['sample_ui'].dump()
+    import rtgui_sys
+    from rtgui_sys import *
+    execfile('sample.rui')
+    print rtgui_sys.wins[0]['sample_ui'].serialize()
