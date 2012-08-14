@@ -60,6 +60,5 @@ if __name__ == '__main__':
     #mw.show()
     #sys.exit(qapp.exec_())
     import rtgui_sys
-    from rtgui_sys import *
-    execfile('sample.rui')
+    execfile('sample.rui', rtgui_sys.__dict__)
     print rtgui_sys.wins[0]['sample_ui'].serialize()
