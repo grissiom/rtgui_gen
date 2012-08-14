@@ -30,12 +30,12 @@ class rtgui_rect(object):
 class rtgui_widget(rtgui_object):
     def __init__(self, **arg):
         super(rtgui_widget, self).__init__(**arg)
-        self._rect = arg['rect']
+        self.rect = arg['rect']
         if 'parent' in arg:
-            self._parent = arg['parent']
-            obj_map[self._parent].children.append(self.name)
+            self.parent = arg['parent']
+            obj_map[self.parent].children.append(self.name)
         else:
-            self._parent = None
+            self.parent = None
 
     def gen_create(self):
         return '{myname} = rtgui_{classname}_create();'.format(
@@ -54,14 +54,14 @@ class rtgui_widget(rtgui_object):
         stli.append('\tstruct rtgui_rect %s;' % rect_n)
         stli.append('''\t{rect_n}.x1 = {x1}; {rect_n}.y1 = {y1};
 \t{rect_n}.x2 = {x2}; {rect_n}.y2 = {y2};'''.format(rect_n=rect_n,
-            x1=self._rect.coords[0], y1=self._rect.coords[1],
-            x2=self._rect.coords[2], y2=self._rect.coords[3],))
+            x1=self.rect.coords[0], y1=self.rect.coords[1],
+            x2=self.rect.coords[2], y2=self.rect.coords[3],))
         stli.append('\trtgui_widget_set_rect({myname}, {rect_n});'.format(
             myname=self.name, rect_n=rect_n))
         stli.append('}')
-        if self._parent:
+        if self.parent:
             stli.append('rtgui_container_add({parent}, {myname});'.format(
-                myname=self.name, parent=self._parent))
+                myname=self.name, parent=self.parent))
         return '\n'.join(stli) + '\n\n'
 
 class rtgui_container(rtgui_widget):
@@ -84,6 +84,27 @@ class rtgui_win(rtgui_container):
     def gen_create(self):
         return '{myname} = rtgui_win_create("{title}");'.format(
                 myname=self.name, title=self.title)
+
+    def generate(self):
+        stli = ['struct rtgui_win %s;\n' % self.name]
+        stli.append('{')
+        rect_n = self.name+'_rect'
+        stli.append('\tstruct rtgui_rect %s;' % rect_n)
+        stli.append('''\t{rect_n}.x1 = {x1}; {rect_n}.y1 = {y1};
+\t{rect_n}.x2 = {x2}; {rect_n}.y2 = {y2};'''.format(rect_n=rect_n,
+            x1=self.rect.coords[0], y1=self.rect.coords[1],
+            x2=self.rect.coords[2], y2=self.rect.coords[3],))
+        if not self.parent:
+            p = 'RT_NULL'
+        else:
+            p = self.parent
+        stli.append('\t{myname} = rtgui_win_create({parent}, "{title}", &{rect});'.format(
+            myname=self.name, parent=p, title=self.title, rect=rect_n))
+        stli.append('}')
+        st = '\n'.join(stli) + '\n'
+        for i in self.children:
+            st += obj_map[i].generate()
+        return st
 
 class rtgui_button(rtgui_widget):
     def __init__(self, **arg):
