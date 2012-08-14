@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from rtgui_sys import *
 
 rtgui_win(
         name = 'sample_ui',
