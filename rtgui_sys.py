@@ -4,11 +4,11 @@ from PyQt4.QtGui  import *
 obj_map = {}
 wins = []
 
-class rtgui_gen_base(QWidget):
+class rtgui_sys_base(QWidget):
     def __init__(self, p=None, **arg):
-        super(rtgui_gen_base, self).__init__(p)
+        super(rtgui_sys_base, self).__init__(p)
 
-class rtgui_object(rtgui_gen_base):
+class rtgui_object(rtgui_sys_base):
     def __init__(self, **arg):
         super(rtgui_object, self).__init__(**arg)
 
@@ -46,7 +46,7 @@ class rtgui_widget(rtgui_object):
             self._parent = None
 
     def get_attr(self):
-        att =  super(rtgui_widget, self).get_attr()
+        att = super(rtgui_widget, self).get_attr()
         if self._parent:
             att.append("parent = '%s'" % self._parent)
         att.append("rect = %s" % self._rect.serialize())
@@ -66,7 +66,13 @@ class rtgui_container(rtgui_widget):
 class rtgui_win(rtgui_container):
     def __init__(self, **arg):
         super(rtgui_win, self).__init__(**arg)
+        self.title = arg['title']
         wins.insert(0, {arg['name']:self})
+
+    def get_attr(self):
+        att = super(rtgui_win, self).get_attr()
+        att.append("title = '%s'" % self.title)
+        return att
 
 class rtgui_button(rtgui_widget):
     def __init__(self, **arg):

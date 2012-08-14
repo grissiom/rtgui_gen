@@ -59,6 +59,10 @@ if __name__ == '__main__':
     #mw = main_wd()
     #mw.show()
     #sys.exit(qapp.exec_())
-    import rtgui_sys
+    import rtgui_sys, rtgui_gen
     execfile('sample.rui', rtgui_sys.__dict__)
-    print rtgui_sys.wins[0]['sample_ui'].serialize()
+    tmp = open('tmp', 'w')
+    tmp.write(rtgui_sys.wins[0]['sample_ui'].serialize())
+    tmp.close()
+    execfile('tmp', rtgui_gen.__dict__)
+    print rtgui_gen.wins[0]['sample_ui'].generate()
